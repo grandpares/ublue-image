@@ -21,4 +21,5 @@ akmods --force --kernels "${KERNEL}" --kmod it87-extras
 modinfo "/usr/lib/modules/${KERNEL}/extra/it87-extras/it87-extras.ko.xz" > /dev/null \
 || (find /var/cache/akmods/it87-extras/ -name \*.log -print -exec cat {} \; && exit 1)
 
+cp /usr/lib/modules/${KERNEL}/extra/it87-extras/it87-extras.ko.xz /it87-extras.ko.xz
 rm -f /etc/yum.repos.d/_copr_grandpares-it87-extras.repo
