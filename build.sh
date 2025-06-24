@@ -2,19 +2,23 @@
 
 set -ouex pipefail
 
-### Install packages
+ARCH="$(rpm -E '%_arch')"
+KERNEL="$(rpm -q 'kernel' --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
+RELEASE="$(rpm -E '%fedora')"
 
-# Packages can be installed from any enabled yum repo on the image.
-# RPMfusion repos are available by default in ublue main images
-# List of rpmfusion packages can be found here:
-# https://mirrors.rpmfusion.org/mirrorlist?path=free/fedora/updates/39/x86_64/repoview/index.html&protocol=https&redirect=1
+if [[ "${RELEASE}" -ge 43 ]]; then
+    COPR_RELEASE="rawhide"
+else
+    COPR_RELEASE="${RELEASE}"
+fi
 
-# this installs a package from fedora repos
-# dnf install -y tmux
+curl -LsSf -o /etc/yum.repos.d/_copr_grandpares-it87-extras.repo "https://copr.fedorainfracloud.org/coprs/grandpares/it87-extras/repo/fedora-${COPR_RELEASE}/grandpares-it87-extras--fedora-${COPR_RELEASE}.repo"
 
-# this would install a package from rpmfusion
-# rpm-ostree install vlc
+### BUILD it87-extras (succeed or fail-fast with debug output)
+dnf install -y \
+    "akmod-it87-extras-*.fc${RELEASE}.${ARCH}"
+akmods --force --kernels "${KERNEL}" --kmod it87-extras
+modinfo "/usr/lib/modules/${KERNEL}/extra/it87-extras/it87-extras.ko.xz" > /dev/null \
+|| (find /var/cache/akmods/it87-extras/ -name \*.log -print -exec cat {} \; && exit 1)
 
-#### Example for enabling a System Unit File
-
-# systemctl enable podman.socket
+rm -f /etc/yum.repos.d/_copr_grandpares-it87-extras.repo
