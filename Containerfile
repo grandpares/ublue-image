@@ -6,7 +6,7 @@ RUN echo "KERNEL_VERSION=$(uname -r)" > /kernelver.env
 
 
 # Stage 1: Builder
-FROM quay.io/fedora/fedora:stable as builder
+FROM quay.io/fedora/fedora:latest as builder
 
 COPY --from=runtime-base /kernelver.env /kernelver.env
 
