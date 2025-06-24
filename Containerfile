@@ -1,22 +1,36 @@
+# Stage 0: Final image base — to get kernel version
+FROM ghcr.io/ublue-os/aurora:stable AS runtime-base
+
+# Extract kernel version
+RUN echo "KERNEL_VERSION=$(uname -r)" > /kernelver.env
+
+
+# Stage 1: Builder
+FROM quay.io/fedora/fedora:stable as builder
+
+COPY --from=runtime-base /kernelver.env /kernelver.env
+
+RUN source /kernelver.env && \
+    dnf -y install dnf-plugins-core && \
+    dnf copr enable grandpares/it87-extras && \
+    dnf -y install akmods kmodtool kernel-devel-${KERNEL_VERSION} gcc make && \
+    dnf -y install akmod-it87-extras && \
+    akmods --force --kernels ${KERNEL_VERSION} && \
+    rpm2cpio /var/cache/akmods/kmod-it87-extras*.rpm | cpio -idmv
+
+# Stage 2: Final image
 FROM ghcr.io/ublue-os/aurora:stable
 
-## Other possible base images include:
-# FROM ghcr.io/ublue-os/bazzite:stable
-# FROM ghcr.io/ublue-os/bluefin-nvidia:stable
-# 
-# ... and so on, here are more base images
-# Universal Blue Images: https://github.com/orgs/ublue-os/packages
-# Fedora base image: quay.io/fedora/fedora-bootc:41
-# CentOS base images: quay.io/centos-bootc/centos-bootc:stream10
+RUN KERNEL_VERSION=$(uname -r)
 
-### MODIFICATIONS
-## make modifications desired in your image and install packages by modifying the build.sh script
-## the following RUN directive does all the things required to run "build.sh" as recommended.
+# Copy the compiled module
+COPY --from=builder /lib/modules/*/extra/it87-extras.ko /usr/lib/modules/${KERNEL_VERSION}/extra/it87-extras.ko
 
-COPY build.sh /tmp/build.sh
+# Recompress and register
+RUN xz -9 /usr/lib/modules/${KERNEL_VERSION}/extra/it87-extras.ko && \
+    depmod -a ${KERNEL_VERSION}
 
 RUN mkdir -p /var/lib/alternatives && \
-    /tmp/build.sh && \
     ostree container commit && \
     bootc container lint
     
