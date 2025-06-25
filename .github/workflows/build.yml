@@ -80,6 +80,17 @@ jobs:
           sep-tags: " "
           sep-annotations: " "
 
+      - name: Export Signing Secret
+        if: github.event_name != 'pull_request'
+        run: |
+          mkdir -p certs
+          if [[ "${{ github.event_name }}"  == 'pull_request' ]]; then
+            echo "This should not have run... exiting..."
+            exit 1
+          else
+            echo "${{ secrets.AKMODS_SECRET }}" > certs/akmods_grandpares.priv
+          fi
+
       - name: Build Image
         id: build_image
         uses: redhat-actions/buildah-build@v2
@@ -89,6 +100,8 @@ jobs:
           # Postfix image name with -custom to make it a little more descriptive
           # Syntax: https://docs.github.com/en/actions/learn-github-actions/expressions#format
           image: ${{ env.IMAGE_NAME }}
+          build-args: |
+            AKMODS_SECRET=certs/akmods_grandpares.priv
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
           oci: false
