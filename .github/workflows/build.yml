@@ -92,7 +92,7 @@ jobs:
           fi
 
       - name: Build Unsigned Image
-        id: build_image
+        id: build_image_nosign
         uses: redhat-actions/buildah-build@v2
         if: github.event_name == 'pull_request'
         with:
