@@ -1,11 +1,6 @@
 # Stage 1: Builder
 FROM ghcr.io/ublue-os/aurora:stable as builder
-COPY certs/akmods_grandpares.priv /tmp/certs/private_key.priv
-COPY certs/akmods_grandpares.der /tmp/certs/public_key.der
 COPY build.sh /tmp/build.sh
-
-RUN install -Dm644 /tmp/certs/public_key.der   /etc/pki/akmods/certs/public_key.der && \
-    install -Dm644 /tmp/certs/private_key.priv /etc/pki/akmods/private/private_key.priv
 RUN /tmp/build.sh
 
 # Stage 2: Final image
