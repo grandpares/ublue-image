@@ -12,6 +12,9 @@ else
     COPR_RELEASE="${RELEASE}"
 fi
 
+install -Dm644 /tmp/certs/public_key.der   /etc/pki/akmods/certs/public_key.der
+install -Dm644 /tmp/certs/private_key.priv /etc/pki/akmods/private/private_key.priv
+
 curl -LsSf -o /etc/yum.repos.d/_copr_grandpares-it87-extras.repo "https://copr.fedorainfracloud.org/coprs/grandpares/it87-extras/repo/fedora-${COPR_RELEASE}/grandpares-it87-extras--fedora-${COPR_RELEASE}.repo"
 
 ### BUILD it87-extras (succeed or fail-fast with debug output)
