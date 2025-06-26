@@ -7,10 +7,6 @@ KERNEL="$(rpm -q 'kernel' --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
 KVERSION="$(rpm -q 'kernel' --queryformat '%{VERSION}-%{RELEASE}' | awk -F '[.]' '{print $1"."$2"."$3}')"
 RELEASE="$(rpm -E '%fedora')"
 
-
-install -Dm644 /tmp/certs/public_key.der   /etc/pki/akmods/certs/public_key.der
-install -Dm644 /tmp/certs/private_key.priv /etc/pki/akmods/private/private_key.priv
-
 curl -L -O "https://github.com/bazzite-org/kernel-bazzite/releases/download/${KVERSION}/kernel-devel-${KERNEL}.rpm"
 ls -lh kernel-devel-${KERNEL}.rpm
 dnf -y install kernel-devel-${KERNEL}.rpm
