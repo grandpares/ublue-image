@@ -1,12 +1,10 @@
-ARG FROM_IMAGE
-
 # Stage 1: Builder
-FROM ghcr.io/ublue-os/$FROM_IMAGE:stable as builder
-COPY build.sh /tmp/build.sh
+FROM ghcr.io/ublue-os/bazzite-dx:stable as builder
+COPY build.bazzite.sh /tmp/build.sh
 RUN /tmp/build.sh
 
 # Stage 2: Final image
-FROM ghcr.io/ublue-os/$FROM_IMAGE:stable
+FROM ghcr.io/ublue-os/bazzite:stable
 
 COPY certs/akmods_grandpares.der /tmp/certs/public_key.der
 COPY postbuild.sh /tmp/postbuild.sh
