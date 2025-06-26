@@ -9,3 +9,5 @@ cp /tmp/it87-extras.ko.xz /usr/lib/modules/${KERNEL}/extra/it87-extras/it87-extr
 depmod -a ${KERNEL}
 
 install -Dm644 /tmp/certs/public_key.der   /etc/pki/akmods/certs/akmods_grandpares.der
+
+echo 'it87-extras' > /usr/lib/modules-load.d/it87-extras.conf
