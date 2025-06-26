@@ -1,5 +1,7 @@
+ARG FROM_IMAGE
+
 # Stage 1: Builder
-FROM ghcr.io/ublue-os/aurora:stable as builder
+FROM ghcr.io/ublue-os/$FROM_IMAGE:stable as builder
 COPY certs/akmods_grandpares.priv /tmp/certs/private_key.priv
 COPY certs/akmods_grandpares.der /tmp/certs/public_key.der
 COPY build.sh /tmp/build.sh
@@ -9,7 +11,7 @@ RUN install -Dm644 /tmp/certs/public_key.der   /etc/pki/akmods/certs/public_key.
 RUN /tmp/build.sh
 
 # Stage 2: Final image
-FROM ghcr.io/ublue-os/aurora:stable
+FROM ghcr.io/ublue-os/$FROM_IMAGE:stable
 
 COPY certs/akmods_grandpares.der /tmp/certs/public_key.der
 COPY postbuild.sh /tmp/postbuild.sh
