@@ -1,0 +1,22 @@
+# Stage 1: Builder
+FROM ghcr.io/ublue-os/bazzite-dx:stable as builder
+COPY certs/akmods_grandpares.priv /tmp/certs/private_key.priv
+COPY certs/akmods_grandpares.der /tmp/certs/public_key.der
+COPY build.bazzite.sh /tmp/build.sh
+
+RUN install -Dm644 /tmp/certs/public_key.der   /etc/pki/akmods/certs/public_key.der && \
+    install -Dm644 /tmp/certs/private_key.priv /etc/pki/akmods/private/private_key.priv
+RUN /tmp/build.sh
+
+# Stage 2: Final image
+FROM ghcr.io/ublue-os/bazzite:stable
+
+COPY certs/akmods_grandpares.der /tmp/certs/public_key.der
+COPY postbuild.sh /tmp/postbuild.sh
+
+COPY --from=builder /it87-extras.ko.xz /tmp/it87-extras.ko.xz
+RUN /tmp/postbuild.sh
+
+RUN mkdir -p /var/lib/alternatives && \
+    ostree container commit && \
+    bootc container lint

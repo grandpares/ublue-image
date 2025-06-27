@@ -97,11 +97,9 @@ jobs:
         if: github.event_name == 'pull_request'
         with:
           containerfiles: |
-            ./Containerfile.unsigned
+            ./Containerfile.bazzite.unsigned
           # Postfix image name with -custom to make it a little more descriptive
           # Syntax: https://docs.github.com/en/actions/learn-github-actions/expressions#format
-          build-args: |
-            FROM_IMAGE=bazzite
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
@@ -113,11 +111,9 @@ jobs:
         if: github.event_name != 'pull_request'
         with:
           containerfiles: |
-            ./Containerfile
+            ./Containerfile.bazzite
           # Postfix image name with -custom to make it a little more descriptive
           # Syntax: https://docs.github.com/en/actions/learn-github-actions/expressions#format
-          build-args: |
-            FROM_IMAGE=bazzite
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
