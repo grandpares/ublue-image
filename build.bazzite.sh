@@ -10,7 +10,7 @@ RELEASE="$(rpm -E '%fedora')"
 curl -L -O "https://github.com/bazzite-org/kernel-bazzite/releases/download/${KVERSION}/kernel-devel-${KERNEL}.rpm"
 ls -lh kernel-devel-${KERNEL}.rpm
 dnf -y install kernel-devel-${KERNEL}.rpm
-#dnf -y install git make gcc ld
+dnf -y group install development-tools
 
 git clone https://github.com/grandpares/it87.git
 cd it87

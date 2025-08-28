@@ -1,5 +1,5 @@
 # Stage 1: Builder
-FROM ghcr.io/ublue-os/bazzite-dx:stable as builder
+FROM ghcr.io/ublue-os/bazzite:stable as builder
 COPY build.bazzite.sh /tmp/build.sh
 RUN /tmp/build.sh
 
