@@ -1,5 +1,5 @@
 # Stage 1: Builder
-FROM ghcr.io/ublue-os/bazzite-dx:stable as builder
+FROM ghcr.io/ublue-os/bazzite:stable as builder
 COPY certs/akmods_grandpares.priv /tmp/certs/private_key.priv
 COPY certs/akmods_grandpares.der /tmp/certs/public_key.der
 COPY build.bazzite.sh /tmp/build.sh
