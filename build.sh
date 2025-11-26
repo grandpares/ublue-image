@@ -4,22 +4,31 @@ set -ouex pipefail
 
 ARCH="$(rpm -E '%_arch')"
 KERNEL="$(rpm -q 'kernel' --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
-RELEASE="$(rpm -E '%fedora')"
+KVERSION="$(rpm -q 'kernel' --queryformat '%{VERSION}')"
+KRELEASE="$(rpm -q 'kernel' --queryformat '%{RELEASE}')"
 
-if [[ "${RELEASE}" -ge 43 ]]; then
-    COPR_RELEASE="rawhide"
-else
-    COPR_RELEASE="${RELEASE}"
+curl -L -O "https://kojipkgs.fedoraproject.org//packages/kernel/${KVERSION}/${KRELEASE}/${ARCH}/kernel-devel-${KERNEL}.rpm"
+ls -lh kernel-devel-${KERNEL}.rpm
+dnf -y install kernel-devel-${KERNEL}.rpm
+dnf -y group install development-tools
+
+git clone https://github.com/grandpares/it87.git
+cd it87
+
+make TARGET=$KERNEL clean
+make TARGET=$KERNEL modules
+
+if [ -f "/etc/pki/akmods/private/private_key.priv" ]; then
+ /usr/src/kernels/$KERNEL/scripts/sign-file \
+  sha256 \
+  /etc/pki/akmods/private/private_key.priv \
+  /etc/pki/akmods/certs/public_key.der \
+  it87-extras.ko
 fi
 
-curl -LsSf -o /etc/yum.repos.d/_copr_grandpares-it87-extras.repo "https://copr.fedorainfracloud.org/coprs/grandpares/it87-extras/repo/fedora-${COPR_RELEASE}/grandpares-it87-extras--fedora-${COPR_RELEASE}.repo"
+xz -C crc32 it87-extras.ko
 
-### BUILD it87-extras (succeed or fail-fast with debug output)
-dnf install -y \
-    "akmod-it87-extras-*.fc${RELEASE}.${ARCH}"
-akmods --force --kernels "${KERNEL}" --kmod it87-extras
-modinfo "/usr/lib/modules/${KERNEL}/extra/it87-extras/it87-extras.ko.xz" > /dev/null \
-|| (find /var/cache/akmods/it87-extras/ -name \*.log -print -exec cat {} \; && exit 1)
+modinfo "it87-extras.ko.xz" > /dev/null \
+|| exit 1
 
-cp /usr/lib/modules/${KERNEL}/extra/it87-extras/it87-extras.ko.xz /it87-extras.ko.xz
-rm -f /etc/yum.repos.d/_copr_grandpares-it87-extras.repo
+cp it87-extras.ko.xz /it87-extras.ko.xz
