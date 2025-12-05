@@ -38,6 +38,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v4
       
+      - name: Free disk space
+        uses: BRAINSia/free-disk-space@f9f59b0ef974ff4b873aa243ce5278ab644eedc6
+        with:
+          tool-cache: false
+          mandb:   true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
       - name: Get current date
         id: date
         run: |
