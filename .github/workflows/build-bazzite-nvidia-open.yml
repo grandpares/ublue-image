@@ -1,5 +1,5 @@
 ---
-name: Build Bazzite Image
+name: Build Bazzite (nvidia-open) Image
 on:
   pull_request:
     branches:
