@@ -9,7 +9,11 @@ KRELEASE="$(rpm -q 'kernel' --queryformat '%{RELEASE}')"
 
 curl -L -O "https://kojipkgs.fedoraproject.org//packages/kernel/${KVERSION}/${KRELEASE}/${ARCH}/kernel-devel-${KERNEL}.rpm"
 ls -lh kernel-devel-${KERNEL}.rpm
-dnf -y install kernel-devel-${KERNEL}.rpm
+if [ -z "$(dnf list installed | grep kernel-devel-${KERNEL})" ]; then
+  dnf -y install kernel-devel-${KERNEL}.rpm
+else
+  dnf -y reinstall kernel-devel-${KERNEL}.rpm
+fi
 dnf -y group install development-tools
 
 git clone https://github.com/grandpares/it87.git
