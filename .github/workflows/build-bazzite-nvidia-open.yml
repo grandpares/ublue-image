@@ -109,9 +109,11 @@ jobs:
         if: github.event_name == 'pull_request'
         with:
           containerfiles: |
-            ./Containerfile.bazzite-nvidia-open.unsigned
+            ./Containerfile.bazzite.unsigned
           # Postfix image name with -custom to make it a little more descriptive
           # Syntax: https://docs.github.com/en/actions/learn-github-actions/expressions#format
+          build-args: |
+            FROM_IMAGE=bazzite-nvidia-open
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
@@ -123,9 +125,11 @@ jobs:
         if: github.event_name != 'pull_request'
         with:
           containerfiles: |
-            ./Containerfile.bazzite-nvidia-open
+            ./Containerfile.bazzite
           # Postfix image name with -custom to make it a little more descriptive
           # Syntax: https://docs.github.com/en/actions/learn-github-actions/expressions#format
+          build-args: |
+            FROM_IMAGE=bazzite-nvidia-open
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
