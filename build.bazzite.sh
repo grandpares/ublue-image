@@ -2,14 +2,8 @@
 
 set -ouex pipefail
 
-ARCH="$(rpm -E '%_arch')"
 KERNEL="$(rpm -q 'kernel' --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
-KVERSION="$(rpm -q 'kernel' --queryformat '%{VERSION}-%{RELEASE}' | awk -F '[.]' '{print $1"."$2"."$3}')"
-RELEASE="$(rpm -E '%fedora')"
 
-curl -L -O "https://github.com/bazzite-org/kernel-bazzite/releases/download/${KVERSION}/kernel-devel-${KERNEL}.rpm"
-ls -lh kernel-devel-${KERNEL}.rpm
-dnf -y install kernel-devel-${KERNEL}.rpm
 dnf -y group install development-tools
 
 git clone https://github.com/grandpares/it87.git
