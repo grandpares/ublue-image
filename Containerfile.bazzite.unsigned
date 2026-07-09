@@ -15,5 +15,4 @@ COPY --from=builder /it87-extras.ko.xz /tmp/it87-extras.ko.xz
 RUN /tmp/postbuild.sh
 
 RUN mkdir -p /var/lib/alternatives && \
-    ostree container commit && \
     bootc container lint
