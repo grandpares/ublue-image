@@ -93,7 +93,7 @@ jobs:
 
       - name: Build Unsigned Image
         id: build_image_nosign
-        uses: redhat-actions/buildah-build@v2
+        uses: redhat-actions/buildah-build@v3
         if: github.event_name == 'pull_request'
         with:
           containerfiles: |
@@ -109,7 +109,7 @@ jobs:
 
       - name: Build Image
         id: build_image
-        uses: redhat-actions/buildah-build@v2
+        uses: redhat-actions/buildah-build@v3
         if: github.event_name != 'pull_request'
         with:
           containerfiles: |
